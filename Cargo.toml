@@ -5,4 +5,8 @@ edition = "2021"
 license = "MIT"      # 添加这一行
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 authors = ["Qfish007 <506175003@qq.com>"]
+[[example]]
+name = "p100"
+path = "examples/p100_file/p100.rs"
+
 [dependencies]
