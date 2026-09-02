@@ -1,7 +1,15 @@
+/*
+examples 使用文件夹，需要在 Cargo.toml 中配置
+[[example]]
+name = "p100"
+path = "examples/p100_file/p100.rs"
+
+*/
+
 use std::fs::File;
 // use std::io::Read;
 fn main() {
-    println!("Example p23: 错误处理");
+    println!("Example p100: Hello, world!");
 
     let _v = Vec::from([1, 2, 3, 4]);
 
