@@ -66,6 +66,7 @@ impl Default for MockMessenger {
 
 impl Messenger for MockMessenger {
     fn send(&self, msg: &str) {
+        // 这里self是不可变引用，不能修改self，所以需要使用borrow_mut()方法获取可变引用
         self.messages.borrow_mut().push(msg.to_string());
     }
 }
