@@ -10,3 +10,4 @@ name = "p100"
 path = "examples/p100_file/p100.rs"
 
 [dependencies]
+trpl = "0.3.0"
