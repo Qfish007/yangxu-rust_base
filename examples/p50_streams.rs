@@ -1,3 +1,3 @@
 fn main() {
-    println!("Example p0: Samples of Rust");
+    println!("Example p50: Streams");
 }
