@@ -1,6 +1,10 @@
+use core::panic;
 use std::{
     assert_eq,
     cell::{self, Cell, RefCell},
+    println,
+    sync::{Arc, Mutex},
+    thread,
 };
 
 pub fn main() {}
@@ -38,6 +42,79 @@ fn test02() {
     // let mut_ref2 = ref_cell.borrow_mut(); // panic! 因为已经有一个可变借用存在了，不能再借用一个可变借用
 }
 
+static NUMBERS: Mutex<Vec<u32>> = Mutex::new(Vec::new());
 fn test03() {
     println!("--------------Mutex------------");
+
+    let mut handles = Vec::new();
+    for i in 0..10 {
+        let handle = std::thread::spawn(move || {
+            let mut numbers = NUMBERS.lock().unwrap();
+            numbers.push(i);
+        });
+        handles.push(handle);
+    }
+    handles.into_iter().for_each(|h| h.join().unwrap());
+
+    let lock = NUMBERS.lock().unwrap();
+    println!("numbers = {:?}", *lock);
+}
+
+fn test04() {
+    println!("--------------Mutex + poisoned ------------");
+
+    let data = Arc::new(Mutex::new(0));
+    {
+        let data = Arc::clone(&data);
+        thread::spawn(move || {
+            let mut lock = data.lock().unwrap();
+            *lock += 1;
+            panic!(); // 这里会导致锁被poisoned，其他线程再去lock的时候会返回Err
+        })
+        .join()
+        .unwrap_err();
+    }
+    {
+        let data = Arc::clone(&data);
+        thread::spawn(move || {
+            match data.lock() {
+                Ok(mut lock) => {
+                    *lock += 1;
+                }
+                Err(poisoned) => {
+                    println!("poisoned: {:?}", poisoned);
+                    let mut lock = poisoned.into_inner(); // 这里会返回锁的内部数据，继续使用
+                    *lock += 1;
+                    println!("lock after poisoned: {:?}", *lock);
+                }
+            }
+        })
+        .join()
+        .unwrap();
+    }
+}
+
+fn test05() {
+    println!("--------------RwLock------------");
+
+    use std::sync::RwLock;
+
+    let rw_lock = RwLock::new(5);
+
+    {
+        let r1 = rw_lock.read().unwrap();
+        let r2 = rw_lock.read().unwrap();
+        assert_eq!(*r1, 5);
+        assert_eq!(*r2, 5);
+    }
+
+    {
+        let mut w = rw_lock.write().unwrap();
+        *w += 1;
+    }
+
+    {
+        let r = rw_lock.read().unwrap();
+        assert_eq!(*r, 6);
+    }
 }
