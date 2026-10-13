@@ -1,7 +1,7 @@
 use std::{sync::mpsc, thread};
 
 pub fn main() {
-    println!("--------------MPSC------------");
+    // println!("--------------MPSC------------");
     // test01();
 }
 

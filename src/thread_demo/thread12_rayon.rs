@@ -3,8 +3,8 @@ use std::time::Instant;
 use rayon::prelude::*;
 
 pub fn main() {
-    println!("--------------Rayon------------");
-    test03();
+    // println!("--------------Rayon------------");
+    // test03();
 }
 
 fn test01() {
