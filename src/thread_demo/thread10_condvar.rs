@@ -18,6 +18,9 @@ fn test01() {
         let (flag, cvar) = &*pair2;
         let mut flag = flag.lock().unwrap();
         *flag = true;
+        println!("step4: 子线程睡觉了");
+        thread::sleep(std::time::Duration::from_secs(2));
+        println!("step4: 子线程唤醒了通知");
         cvar.notify_one();
         println!("step4: 子线程执行完成");
     });

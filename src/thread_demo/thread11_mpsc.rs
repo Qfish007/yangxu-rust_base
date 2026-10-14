@@ -20,7 +20,7 @@ fn test01() {
         for msg in rx.iter() {
             match msg {
                 Msg::Call(task) => task(),
-                Msg::Exit => break,
+                Msg::Exit => break, // 收到Exit消息,退出
             }
         }
     });

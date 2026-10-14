@@ -4,23 +4,27 @@ use rayon::prelude::*;
 
 pub fn main() {
     // println!("--------------Rayon------------");
-    // test03();
+    // test01();
+}
+
+use std::fmt::Debug;
+
+fn calc_time<T: Debug>(f: impl Fn() -> T) {
+    let start = Instant::now();
+    let ret = f();
+    println!("time: {:?}", start.elapsed());
+    println!("sum:{:?}", ret);
 }
 
 fn test01() {
     println!("--------------test01------------");
 
     let nums: Vec<u64> = (0..10000000).collect();
-    // 计算时间
-    let start = Instant::now();
-    let sum = nums.par_iter().sum::<u64>();
-    println!("time: {:?}", start.elapsed());
-    println!("sum1: {}", sum);
+    // rayon 计算时间
+    calc_time(|| nums.par_iter().sum::<u64>());
 
-    let start = Instant::now();
-    let sum = nums.iter().sum::<u64>();
-    println!("time: {:?}", start.elapsed());
-    println!("sum2: {}", sum);
+    // 常规迭代
+    calc_time(|| nums.iter().sum::<u64>());
 }
 
 fn test02() {
@@ -36,6 +40,7 @@ fn test02() {
         .map(|c| c.to_vec())
         .collect();
     println!("{:?}", matrix);
+
     pool.scope(|s| {
         for (i, row) in matrix.iter().enumerate() {
             s.spawn(move |_| {
